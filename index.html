@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Malla Curricular Derecho UCV</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=League+Spartan:700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      margin: 0;
+      background: #114087;
+      color: #222;
+      min-height: 100vh;
+      font-family: 'Montserrat', Arial, sans-serif;
+      overflow-x: auto;
+      position: relative;
+    }
+    #btn-regresa {
+      position: fixed;
+      top: 12px;
+      left: 12px;
+      background: #ffffff;
+      color: #114087;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 16px;
+      font-family: 'Montserrat', Arial, sans-serif;
+      font-weight: 700;
+      font-size: 1em;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      z-index: 10000;
+      user-select: none;
+      transition: background-color 0.25s, color 0.25s;
+    }
+    #btn-regresa:hover, #btn-regresa:focus {
+      background: #114087;
+      color: #fff;
+      outline: none;
+    }
+    /* Imagen header como banner a lo ancho */
+    #header-image {
+      width: 100vw;
+      max-width: 100vw;
+      min-width: 100vw;
+      height: auto;
+      display: block;
+      margin: 0;
+      user-select: none;
+      border: 0;
+      padding: 0;
+      position: relative;
+      left: 50%;
+      right: 50%;
+      transform: translateX(-50%);
+    }
+    /* Cuadro informativo blanco con texto azul entre header y columnas */
+    .info-box {
+      background-color: #ffffff;
+      color: #114087;
+      max-width: 1280px;
+      margin: 1em auto 1em auto; /* margen arriba y abajo igualado a 1em */
+      padding: 20px 25px;
+      font-size: 1em;
+      line-height: 1.5;
+      user-select: none;
+      box-sizing: border-box;
+      font-family: 'Montserrat', Arial, sans-serif;
+      border-radius: 12px; /* bordes redondeados */
+    }
+    .info-box p {
+      margin: 0 0 0.75em 0;
+    }
+    .main-container {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(250px, 1fr));
+      grid-gap: 30px;
+      max-width: 1280px;
+      margin: 0 auto 35px auto;
+      padding: 0 10px;
+      box-sizing: border-box;
+    }
+    .vertical-column {
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+      min-width: 250px;
+      max-width: 100%;
+      box-sizing: border-box;
+      align-items: stretch;
+    }
+    .column-block {
+      background: #FFBD59;
+      border-radius: 17px;
+      padding: 23px 17px 20px 17px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.09);
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      flex-shrink: 0;
+      min-height: 100px;
+    }
+    .upper-block {
+      flex-grow: 0;
+    }
+    .lower-block {
+      flex-grow: 1;
+    }
+    .col-title {
+      font-family: 'Montserrat', Arial, sans-serif;
+      font-weight: 700;
+      text-align: center;
+      font-size: 1.21em;
+      margin-bottom: 15px;
+      color: #114087;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      user-select: none;
+    }
+    button.asignatura, button.especial-btn {
+      font-size: 1em;
+      padding: 14px 13px;
+      border: none;
+      border-radius: 12px;
+      background: #fff;
+      margin-bottom: 14px;
+      color: #114087;
+      font-family: inherit;
+      font-weight: 500;
+      text-align: left;
+      cursor: pointer;
+      box-shadow: 0 1.5px 6px rgba(18, 39, 124, 0.08);
+      transition: background 0.18s, color 0.18s;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      outline: none;
+      user-select: none;
+    }
+    button.asignatura[aria-disabled="true"], button.especial-btn[aria-disabled="true"] {
+      cursor: not-allowed;
+      background: #d1d1d151;
+      color: #5871a0;
+      opacity: 0.72;
+    }
+    button.asignatura.aprobada, button.especial-btn.aprobada {
+      background: #114087 !important;
+      color: white;
+      text-decoration: line-through;
+      font-weight: 700;
+    }
+    .uc-label, .especial-uc-label {
+      font-size: 0.93em;
+      padding-left: 7px;
+      color: #114087b8;
+      font-weight: 400;
+      opacity: 0.82;
+      flex-shrink: 0;
+      user-select: none;
+    }
+    .tooltip {
+      visibility: hidden;
+      width: 240px;
+      background-color: #222c44e2;
+      color: #fff;
+      text-align: left;
+      border-radius: 8px;
+      padding: 8px 13px;
+      position: absolute;
+      z-index: 9;
+      left: 50%;
+      bottom: 123%;
+      transform: translateX(-50%);
+      opacity: 0;
+      transition: opacity 0.22s;
+      font-size: 0.95em;
+      font-family: 'Montserrat', Arial, sans-serif;
+      pointer-events: none;
+      user-select: none;
+    }
+    button.asignatura[aria-disabled="true"]:hover .tooltip,
+    button.especial-btn[aria-disabled="true"]:hover .tooltip {
+      visibility: visible;
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .info-col {
+      background: #fff;
+      border-radius: 12px;
+      color: #114087;
+      font-family: 'Montserrat', Arial, sans-serif;
+      font-weight: 500;
+      font-size: 1em;
+      padding: 16px 11px;
+      box-shadow: 0 1.5px 6px #12277c18;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      white-space: normal;
+      user-select: none;
+      line-height: 1.5;
+      min-height: 66px;
+    }
+    .info-col p {
+      margin-top: 0;
+      margin-bottom: 0;
+      line-height: 1.4;
+    }
+    @media (max-width: 900px) {
+      .main-container {
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+        align-items: center;
+      }
+      .vertical-column {
+        width: 100% !important;
+        max-width: none !important;
+      }
+      #btn-regresa {
+        position: static;
+        margin: 10px auto 20px auto;
+        display: block;
+      }
+      #header-image {
+        width: 100vw;
+        max-width: 100vw;
+        min-width: 100vw;
+        margin: 0;
+      }
+      .info-box {
+        margin-top: 1em; /* agregado también en móvil para coherencia */
+        padding: 15px 20px;
+        font-size: 0.95em;
+      }
+    }
+    .footer {
+      text-align: center;
+      margin: 20px 0 20px 0;
+      opacity: 1;
+      max-width: 680px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.35;
+      user-select: none;
+    }
+    .footer img {
+      display: block;
+      margin: 0 auto;
+      max-width: 320px;
+      width: 100%;
+      height: auto;
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <button id="btn-regresa" type="button">Regresa a nuestra página</button>
+
+  <!-- Imagen header a lo ancho arriba -->
+  <img id="header-image" src="header mas.png" alt="Header MAS" />
+
+  <!-- Cuadro blanco con instrucción entre header y columnas -->
+  <div class="info-box">
+    <p><strong>¿Cómo usarla?</strong></p>
+    <p>Haz click o presiona las materias que has aprobado, en la medida que vas aprobando te muestra las materias que puedes ver en tu próximo año académico.</p>
+    <p>También te muestra las materias que no puedes ver por prelaciones y las materias que necesitas aprobar para verlas.</p>
+  </div>
+
+  <div class="main-container" id="main-container">
+    <!-- Primer año -->
+    <div class="vertical-column" id="col-primer-ano">
+      <div class="column-block upper-block" id="primer-ano-block"></div>
+    </div>
+    <!-- Segundo año -->
+    <div class="vertical-column" id="col-segundo-ano">
+      <div class="column-block upper-block" id="segundo-ano-block"></div>
+    </div>
+    <!-- Tercer año -->
+    <div class="vertical-column" id="col-tercer-ano">
+      <div class="column-block upper-block" id="tercer-ano-block"></div>
+    </div>
+    <!-- Cuarto año -->
+    <div class="vertical-column" id="col-cuarto-ano">
+      <div class="column-block lower-block" id="cuarto-ano-block"></div>
+    </div>
+    <!-- Quinto año -->
+    <div class="vertical-column" id="col-quinto-ano">
+      <div class="column-block lower-block" id="quinto-ano-block"></div>
+    </div>
+    <!-- Casillas especiales -->
+    <div class="vertical-column" id="col-especiales">
+      <div class="column-block lower-block" id="especiales-block"></div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <img src="logo en blanco.png" alt="Logo Blanco UCV" />
+  </div>
+
+  <script>
+    const MALLA = [
+      {
+        year: "Primer año",
+        materias: [
+          { id: "1101", nombre: "Derecho Civil I", uc: 6 },
+          { id: "1201", nombre: "Derecho Constitucional", uc: 6 },
+          { id: "1501", nombre: "Introducción al Derecho", uc: 6 },
+          { id: "1502", nombre: "Derecho Romano I", uc: 6 },
+          { id: "1601", nombre: "Economía Política", uc: 6 },
+          { id: "1602", nombre: "Sociología Jurídica", uc: 6 },
+        ],
+      },
+      {
+        year: "Segundo año",
+        materias: [
+          { id: "1102", nombre: "Derecho Civil II", uc: 6, deps: ["1101", "1501"] },
+          { id: "1202", nombre: "Derecho Administrativo I", uc: 6, deps: ["1201"] },
+          { id: "1206", nombre: "Derecho Internacional Público", uc: 6, deps: ["1201"] },
+          { id: "1301", nombre: "Derecho Penal I", uc: 6 },
+          { id: "1303", nombre: "Criminología", uc: 6 },
+          { id: "1503", nombre: "Derecho Romano II", uc: 6, deps: ["1502"] },
+        ],
+      },
+      {
+        year: "Tercer año",
+        materias: [
+          { id: "1103", nombre: "Derecho Civil III", uc: 6, deps: ["1101", "1501"] },
+          { id: "1203", nombre: "Derecho Administrativo II", uc: 6, deps: ["1202"] },
+          { id: "1205", nombre: "Finanzas Públicas", uc: 6, deps: ["1202", "1601"] },
+          { id: "1302", nombre: "Derecho Penal II", uc: 6, deps: ["1301"] },
+          { id: "1504", nombre: "Filosofía del Derecho", uc: 6 },
+          { id: "1902", nombre: "Práctica Jurídica I", uc: 6, deps: ["1101", "1501"] },
+        ],
+      },
+      {
+        year: "Cuarto año",
+        materias: [
+          { id: "1104", nombre: "Derecho Civil IV", uc: 6, deps: ["1102"] },
+          { id: "1106", nombre: "Contratos y Garantías", uc: 6, deps: ["1103"] },
+          { id: "1107", nombre: "Derecho Mercantil I", uc: 6, deps: ["1103"] },
+          { id: "1109", nombre: "Derecho del Trabajo", uc: 6, deps: ["1103"] },
+          { id: "1401", nombre: "Derecho Procesal Civil I", uc: 6, deps: ["1102"] },
+          { id: "1903", nombre: "Práctica Jurídica II", uc: 6, deps: ["1902"] },
+        ],
+      },
+      {
+        year: "Quinto año",
+        materias: [
+          { id: "1108", nombre: "Derecho Mercantil II", uc: 6, deps: ["1107"] },
+          { id: "1110", nombre: "Derecho Internacional Privado", uc: 6, deps: ["1103", "1401"] },
+          { id: "1207", nombre: "Derecho Administrativo III", uc: 6, deps: ["1203", "1401"] },
+          { id: "1402", nombre: "Derecho Procesal Civil II", uc: 6, deps: ["1401"] },
+          { id: "1403", nombre: "Derecho Procesal Penal", uc: 6, deps: ["1302", "1401"] },
+          { id: "1904", nombre: "Práctica Jurídica III", uc: 6, deps: ["1401", "1903"] },
+        ],
+      },
+    ];
+
+    const ESPECIALES = [
+      { id: "1905", nombre: "Seminario / Curso de Extensión", uc: 2, necesitaCreditos: 72 },
+      { id: "SC", nombre: "Servicio Comunitario", uc: 0, necesitaCreditos: 91 },
+    ];
+
+    const STORAGE_KEY = "der_ucv_aprobadas_v2";
+
+    function obtenerAprobadas() {
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+      } catch {
+        return [];
+      }
+    }
+
+    function guardarAprobadas(aprobadas) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(aprobadas));
+    }
+
+    function getMateriaPorId(id) {
+      for (const bloque of MALLA) {
+        const encontrada = bloque.materias.find((mat) => mat.id === id);
+        if (encontrada) return encontrada;
+      }
+      if (id === "SC") return ESPECIALES.find((esp) => esp.id === id) || null;
+      return null;
+    }
+
+    function requisitosNoAprobados(materia, aprobadas) {
+      if (!materia.deps) return [];
+      return (materia.deps || []).filter((reqId) => !aprobadas.includes(reqId));
+    }
+
+    function calcCreditosAprobados(aprobadas) {
+      let total = 0;
+      for (const bloque of MALLA) {
+        for (const mat of bloque.materias) {
+          if (aprobadas.includes(mat.id) && mat.uc) total += mat.uc;
+        }
+      }
+      for (const esp of ESPECIALES) {
+        if (aprobadas.includes(esp.id) && esp.uc) total += esp.uc;
+      }
+      return total;
+    }
+
+    function crearBotonMateria(materia) {
+      const aprobadas = obtenerAprobadas();
+      const reqsNoAprob = requisitosNoAprobados(materia, aprobadas);
+      const bloqueada = reqsNoAprob.length > 0;
+      const btn = document.createElement("button");
+      btn.className = "asignatura";
+      btn.setAttribute("data-id", materia.id);
+      btn.tabIndex = 0;
+      btn.innerHTML = `<span>${materia.nombre}</span><span class="uc-label">${materia.uc} UC</span>`;
+      if (aprobadas.includes(materia.id)) {
+        btn.classList.add("aprobada");
+        btn.setAttribute("aria-pressed", "true");
+      } else {
+        btn.setAttribute("aria-pressed", "false");
+      }
+      if (bloqueada) {
+        btn.setAttribute("aria-disabled", "true");
+        btn.tabIndex = -1;
+        const tooltip = document.createElement("span");
+        tooltip.className = "tooltip";
+        const textosFaltan = reqsNoAprob.map((id) => {
+          const mat = getMateriaPorId(id);
+          return mat ? mat.nombre : id;
+        });
+        tooltip.textContent = `Debes aprobar primero: ${textosFaltan.join(", ")}`;
+        btn.appendChild(tooltip);
+      } else {
+        btn.removeAttribute("aria-disabled");
+        btn.addEventListener("click", () => toggleAprobada(materia.id));
+      }
+      return btn;
+    }
+
+    function crearBotonEspecial(especial) {
+      const aprobadas = obtenerAprobadas();
+      const totalCredAprob = calcCreditosAprobados(aprobadas);
+      const bloqueada = totalCredAprob < especial.necesitaCreditos;
+      const btn = document.createElement("button");
+      btn.className = "especial-btn";
+      btn.setAttribute("data-id", especial.id);
+      const nombreSpan = document.createElement("span");
+      nombreSpan.textContent = especial.nombre;
+      btn.appendChild(nombreSpan);
+      if (especial.uc && especial.uc > 0) {
+        const ucSpan = document.createElement("span");
+        ucSpan.className = "especial-uc-label";
+        ucSpan.textContent = `${especial.uc} UC`;
+        btn.appendChild(ucSpan);
+      }
+      if (aprobadas.includes(especial.id)) {
+        btn.classList.add("aprobada");
+        btn.setAttribute("aria-pressed", "true");
+      } else {
+        btn.setAttribute("aria-pressed", "false");
+      }
+      if (bloqueada) {
+        btn.setAttribute("aria-disabled", "true");
+        btn.tabIndex = -1;
+        const tooltip = document.createElement("span");
+        tooltip.className = "tooltip";
+        tooltip.textContent = `Debes tener aprobados ${especial.necesitaCreditos} créditos.`;
+        btn.appendChild(tooltip);
+      } else {
+        btn.removeAttribute("aria-disabled");
+        btn.addEventListener("click", () => toggleAprobada(especial.id));
+      }
+      return btn;
+    }
+
+    function renderMalla() {
+      ['primer-ano-block','segundo-ano-block','tercer-ano-block','cuarto-ano-block','quinto-ano-block','especiales-block'].forEach(id => {
+        document.getElementById(id).innerHTML = '';
+      });
+
+      MALLA.forEach(bloque => {
+        const mapId = {
+          "Primer año": 'primer-ano-block',
+          "Segundo año": 'segundo-ano-block',
+          "Tercer año": 'tercer-ano-block',
+          "Cuarto año": 'cuarto-ano-block',
+          "Quinto año": 'quinto-ano-block'
+        };
+        const cont = document.getElementById(mapId[bloque.year]);
+        if (cont) {
+          cont.insertAdjacentHTML('beforeend', `<div class="col-title">${bloque.year}</div>`);
+          bloque.materias.forEach(materia => {
+            cont.appendChild(crearBotonMateria(materia));
+          });
+        }
+      });
+
+      const c6 = document.getElementById('especiales-block');
+      ESPECIALES.forEach(e => {
+        c6.appendChild(crearBotonEspecial(e));
+      });
+
+      const infoDiv = document.createElement('div');
+      infoDiv.className = 'info-col';
+      infoDiv.innerHTML = `
+        <p>Para cursar <b>Seminario o Curso de Extensión</b>, deben haberse aprobado 72 créditos.</p>
+        <p>Para realizar <b>Servicio Comunitario</b>, deben haberse aprobado 91 créditos.</p>`;
+      c6.appendChild(infoDiv);
+    }
+
+    function toggleAprobada(id) {
+      let aprobadas = obtenerAprobadas();
+      if (aprobadas.includes(id)) {
+        aprobadas = aprobadas.filter(i => i !== id);
+      } else {
+        aprobadas.push(id);
+      }
+      guardarAprobadas(aprobadas);
+      renderMalla();
+    }
+
+    window.addEventListener('DOMContentLoaded', renderMalla);
+
+    document.getElementById('btn-regresa').addEventListener('click', () => {
+      window.location.href = 'https://sites.google.com/view/masestudiantilucv/inicio';
+    });
+
+    document.querySelector('body').addEventListener('dblclick', (e) => {
+      if (e.shiftKey) {
+        if (confirm('¿Seguro que deseas borrar todo el progreso guardado?')) {
+          localStorage.removeItem(STORAGE_KEY);
+          renderMalla();
+        }
+      }
+    });
+  </script>
+</body>
+</html>
